@@ -48,17 +48,22 @@ class MapPanel(wx.Panel):
         self.y2 = wx.TextCtrl(self, pos=(831, 276), size=(37, 22))
         self.entertag = wx.TextCtrl(self, pos=(700, 367), size=(100, 22))
 
-        taborder = (self.dbname, self.relationname, self.btnlockrelation, self.maingrid, self.subgrid, self.x1, self.y1
-                    , self.x2, self.y2, self.btngotoplot, self.entertag)
+        taborder = (self.dbname, self.relationname, self.btnlockrelation, self.maingrid, self.subgrid, self.x1, self.y1,
+                    self.x2, self.y2, self.btngotoplot, self.entertag)
         self.relationname.MoveAfterInTabOrder(self.dbname)
         for i in range(len(taborder)-1):
             taborder[i + 1].MoveAfterInTabOrder(taborder[i])
 
+        self.buffer = wx.Bitmap(1200, 650)
+        g = wx.BufferedDC(wx.ClientDC(self), self.buffer)
+        g.Clear()
+
         self.btngotoplot.Bind(wx.EVT_BUTTON, self.refresh)
+        self.btngotoplot.Bind(wx.EVT_BUTTON, self.drawline)
         self.btnlockrelation.Bind(wx.EVT_BUTTON, self.lockrelation)
         self.Bind(wx.EVT_MOTION, self.movemouse)
-        self.btngotoplot.Bind(wx.EVT_BUTTON, self.drawline)
         self.Bind(wx.EVT_LEFT_DOWN, self.drawpoint)
+        self.Bind(wx.EVT_PAINT, self.bufferpaint)
 
     def drawline(self, event):
         maingridvalue = self.maingrid.GetValue()
@@ -72,7 +77,7 @@ class MapPanel(wx.Panel):
             pn = 500/int(maingridvalue)
             pm = 500/int(maingridvalue)/int(subgridvalue)
             k = int(maingridvalue)*int(subgridvalue)
-            g = wx.ClientDC(self)
+            g = wx.BufferedDC(wx.ClientDC(self), self.buffer)
             g.Clear()
             g.SetPen(wx.Pen(wx.BLACK, 1))
             for i in range(0, k+1):
@@ -113,10 +118,15 @@ class MapPanel(wx.Panel):
         elif self.x1.GetValue() != '' and self.y1.GetValue() != '' and self.x2.GetValue() != '' \
                 and self.y2.GetValue() != '' and tag.strip():
             x, y = self.ScreenToClient(wx.GetMousePosition())
-            g = wx.ClientDC(self)
+            g = wx.BufferedDC(wx.ClientDC(self), self.buffer)
             g.SetPen(wx.Pen(wx.BLUE, 1))
             g.SetBrush(wx.Brush('grey', style=wx.BRUSHSTYLE_TRANSPARENT))
             g.DrawEllipse(x, y, 3, 3)
+            g.SetTextForeground(wx.BLUE)
+            g.DrawText(str(self.entertag.GetValue()), x+2, y+2)
+
+    def bufferpaint(self, event):
+        wx.BufferedPaintDC(self, self.buffer)
 
 
 if __name__ == '__main__':
