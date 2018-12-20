@@ -19,9 +19,17 @@ class MapPanel(wx.Panel):
         # 設定背景顏色
         self.SetBackgroundColour((240, 240, 240))
 
+        self.plotsizebox = wx.StaticBox(self, label='選擇輸入區域大小', pos=(700, 90), size=(152, 88))
+        self.newdtbox = wx.StaticBox(self, label='新增資料欄位填寫', pos=(905, 44), size=(192, 254))
+        self.deletedtbox = wx.StaticBox(self, label='刪除資料tag填寫', pos=(905, 333), size=(192, 88))
+
         # 設定按鈕
-        self.btngotoplot = wx.Button(self, label='前往/重新整理', pos=(702, 304), size=(166, 23), style=0)
         self.btnlockrelation = wx.Button(self, label='鎖定', pos=(806, 59), size=(75, 23), style=0)
+        self.btngotoplot = wx.Button(self, label='前往/重新整理', pos=(702, 304), size=(166, 23), style=0)
+        self.newdt = wx.Button(self, label='新增資料', pos=(905, 15), size=(73, 23))
+        self.newconfirm = wx.Button(self.newdtbox, label='確認新增', pos=(21, 212), size=(147, 23))
+        self.deletedt = wx.Button(self, label='刪除資料', pos=(905, 304), size=(75, 23))
+        self.deleteconfirm = wx.Button(self.deletedtbox, label='確認刪除', pos=(21, 49), size=(147, 23))
 
         # 設定Label
         self.labeldbname = wx.StaticText(self, label='資料庫名稱', pos=(702, 20), size=(65, -1), style=wx.ALIGN_CENTRE)
@@ -36,11 +44,19 @@ class MapPanel(wx.Panel):
         self.labely2 = wx.StaticText(self, label='y2', pos=(831, 251), size=(37, -1), style=wx.ALIGN_CENTRE)
         self.labelentertag = wx.StaticText(self, label='欲輸入tag', pos=(700, 341), size=(100, -1),
                                            style=wx.ALIGN_CENTRE)
-        self.labelquadrat = wx.StaticText(self, label='小樣方資料顯示', pos=(698, 400), size=(89, -1), style=wx.ALIGN_CENTRE)
+        self.labelquadrat = wx.StaticText(self, label='小樣方資料顯示', pos=(698, 420), size=(89, -1), style=wx.ALIGN_CENTRE)
         self.labelX = wx.StaticText(self, label='', pos=(1066, 579), size=(50, -1), style=wx.ALIGN_CENTRE)
         self.labelY = wx.StaticText(self, label='', pos=(1122, 579), size=(50, -1), style=wx.ALIGN_CENTRE)
         self.labelX.SetBackgroundColour('white')
         self.labelY.SetBackgroundColour('white')
+        self.labelnewdtx1 = wx.StaticText(self.newdtbox, label='x1', pos=(19, 21), size=(17, -1))
+        self.labelnewdty1 = wx.StaticText(self.newdtbox, label='y1', pos=(19, 49), size=(17, -1))
+        self.labelnewdtx2 = wx.StaticText(self.newdtbox, label='x2', pos=(19, 77), size=(17, -1))
+        self.labelnewdty2 = wx.StaticText(self.newdtbox, label='y2', pos=(19, 105), size=(17, -1))
+        self.labelnewdttag = wx.StaticText(self.newdtbox, label='tag', pos=(19, 133), size=(19, -1))
+        self.labelnewdtsp = wx.StaticText(self.newdtbox, label='sp', pos=(19, 161), size=(15, -1))
+        self.labelnewdtdbh = wx.StaticText(self.newdtbox, label='dbh', pos=(19, 189), size=(23, -1))
+        self.labeldeletetag = wx.StaticText(self.deletedtbox, label='tag', pos=(19, 25), size=(20, -1))
 
         # 設定Textbox
         self.dbname = wx.TextCtrl(self, pos=(770, 19), size=(111, 22))
@@ -52,19 +68,31 @@ class MapPanel(wx.Panel):
         self.x2 = wx.TextCtrl(self, pos=(788, 276), size=(37, 22))
         self.y2 = wx.TextCtrl(self, pos=(831, 276), size=(37, 22))
         self.entertag = wx.TextCtrl(self, pos=(700, 367), size=(100, 22))
+        self.newx1 = wx.TextCtrl(self.newdtbox, pos=(68, 16), size=(100, 22))
+        self.newy1 = wx.TextCtrl(self.newdtbox, pos=(68, 44), size=(100, 22))
+        self.newx2 = wx.TextCtrl(self.newdtbox, pos=(68, 72), size=(100, 22))
+        self.newy2 = wx.TextCtrl(self.newdtbox, pos=(68, 100), size=(100, 22))
+        self.newtag = wx.TextCtrl(self.newdtbox, pos=(68, 128), size=(100, 22))
+        self.newsp = wx.TextCtrl(self.newdtbox, pos=(68, 156), size=(100, 22))
+        self.newdbh = wx.TextCtrl(self.newdtbox, pos=(68, 184), size=(100, 22))
+        self.deletetag = wx.TextCtrl(self.deletedtbox, pos=(68, 21), size=(100, 22))
 
         # 設定表格
-        self.datagrid = wxgrid.Grid(self, pos=(698, 420), size=(480, 150))
+        self.datagrid = wxgrid.Grid(self, pos=(698, 445), size=(480, 120))
         self.datagrid.CreateGrid(0, 0)
         self.datagrid.HideRowLabels()
         self.datagrid.SetLabelBackgroundColour(wx.WHITE)
 
+        self.plotsize1 = wx.RadioButton(self.plotsizebox, label='1x1', pos=(11, 21), size=(47, 16))
+        self.plotsize10 = wx.RadioButton(self.plotsizebox, label='5x5', pos=(11, 43), size=(47, 16))
+        self.plotsize20 = wx.RadioButton(self.plotsizebox, label='10x10', pos=(11, 66), size=(59, 16))
+        self.plotsize10.SetValue(True)
+
         # 設定tab順序
-        taborder = (self.dbname, self.relationname, self.btnlockrelation, self.maingrid, self.subgrid, self.x1, self.y1,
-                    self.x2, self.y2, self.btngotoplot, self.entertag)
-        self.relationname.MoveAfterInTabOrder(self.dbname)
-        for i in range(len(taborder)-1):
-            taborder[i + 1].MoveAfterInTabOrder(taborder[i])
+        taborder = (self.dbname, self.relationname, self.btnlockrelation, self.maingrid, self.subgrid, self.x1,
+                    self.y1, self.x2, self.y2, self.btngotoplot, self.entertag)
+        for i in range(0, len(taborder)-1):
+                taborder[i + 1].MoveAfterInTabOrder(taborder[i])
 
         # 設定緩衝區大小，把黑色部分消除(避免最小化、被其他視窗覆蓋導致圖形消失)
         self.buffer = wx.Bitmap(1200, 650)
@@ -75,12 +103,19 @@ class MapPanel(wx.Panel):
         self.btngotoplot.Bind(wx.EVT_BUTTON, self.refresh)
         self.btngotoplot.Bind(wx.EVT_BUTTON, self.drawlineandoldpoint)
         self.btnlockrelation.Bind(wx.EVT_BUTTON, self.lockrelation)
+        self.newdt.Bind(wx.EVT_BUTTON, self.newdtclick)
+        self.newconfirm.Bind(wx.EVT_BUTTON, self.newconfirmclick)
+        self.deletedt.Bind(wx.EVT_BUTTON,self.deletedtclick)
         self.Bind(wx.EVT_MOTION, self.movemouse)
         self.Bind(wx.EVT_LEFT_DOWN, self.drawpoint)
         self.Bind(wx.EVT_PAINT, self.bufferpaint)
+        self.dbname.SetFocus()
 
         self.dbnametext = ''
         self.relationnametext = ''
+
+        self.newdtbox.Enabled = False
+        self.deletedtbox.Enabled = False
 
     def drawlineandoldpoint(self, event):
         maingridvalue = self.maingrid.GetValue()
@@ -220,6 +255,37 @@ class MapPanel(wx.Panel):
 
     def bufferpaint(self, event):
         wx.BufferedPaintDC(self, self.buffer)
+
+    def newdtclick(self, event):
+        if self.dbnametext == '':
+            wx.MessageBox('no database')
+            return
+
+        self.newdtbox.Enabled = True
+        self.newx1.SetFocus()
+
+        conn = psycopg2.connect(database=self.dbnametext, user='postgres', password='2717484',
+                                host='localhost', port='5432')
+        cur = conn.cursor()
+        cur.execute('select distinct "sp" from ' + self.relationnametext)
+        sprows = cur.fetchall()
+        splist = []
+        conn.close()
+        for i in range(0, len(sprows)):
+            splist.append(sprows[i][0])
+        self.newsp.AutoComplete(splist)
+
+    def newconfirmclick(self, event):
+        if str(self.newx1.GetValue()).strip() == '' or str(self.newy1.GetValue()).strip() == '' or \
+                str(self.newx2.GetValue()).strip() == '' or str(self.newy2.GetValue()).strip() == '' or \
+                str(self.newsp.GetValue()).strip() == '':
+            wx.MessageBox('所需資料不足')
+            return
+
+    def deletedtclick(self, event):
+        if self.dbnametext == '':
+            wx.MessageBox('no database')
+            return
 
 
 if __name__ == '__main__':
