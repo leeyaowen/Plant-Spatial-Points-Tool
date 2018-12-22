@@ -312,6 +312,7 @@ class MapPanel(wx.Panel):
                 str(self.newx2.GetValue()).strip() == '' or str(self.newy2.GetValue()).strip() == '' or \
                 str(self.newtag.GetValue()).strip() == '' or str(self.newsp.GetValue()).strip() == '':
             wx.MessageBox('所需資料不足')
+            self.newdtbox.Enabled = False
             return
 
         x1 = str(self.newx1.GetValue()).strip()
@@ -379,6 +380,7 @@ class MapPanel(wx.Panel):
                 wx.MessageBox('植株不在此區域')
         else:
             wx.MessageBox('請先前往小樣方或輸入要刪除的植株tag')
+            self.deletedtbox.Enabled = False
 
     def size1change(self, event):
         self.plotsize = 1
