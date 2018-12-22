@@ -100,12 +100,15 @@ class MapPanel(wx.Panel):
         g.Clear()
 
         # 設定事件
-        self.btngotoplot.Bind(wx.EVT_BUTTON, self.refresh)
         self.btngotoplot.Bind(wx.EVT_BUTTON, self.drawlineandoldpoint)
         self.btnlockrelation.Bind(wx.EVT_BUTTON, self.lockrelation)
         self.newdt.Bind(wx.EVT_BUTTON, self.newdtclick)
         self.newconfirm.Bind(wx.EVT_BUTTON, self.newconfirmclick)
-        self.deletedt.Bind(wx.EVT_BUTTON,self.deletedtclick)
+        self.deletedt.Bind(wx.EVT_BUTTON, self.deletedtclick)
+        self.deleteconfirm.Bind(wx.EVT_BUTTON, self.deleteconfrimclick)
+        self.plotsize1.Bind(wx.EVT_RADIOBUTTON, self.size1change)
+        self.plotsize10.Bind(wx.EVT_RADIOBUTTON, self.size10change)
+        self.plotsize20.Bind(wx.EVT_RADIOBUTTON, self.size20change)
         self.Bind(wx.EVT_MOTION, self.movemouse)
         self.Bind(wx.EVT_LEFT_DOWN, self.drawpoint)
         self.Bind(wx.EVT_PAINT, self.bufferpaint)
@@ -113,6 +116,7 @@ class MapPanel(wx.Panel):
 
         self.dbnametext = ''
         self.relationnametext = ''
+        self.plotsize = 10
 
         self.newdtbox.Enabled = False
         self.deletedtbox.Enabled = False
@@ -165,12 +169,29 @@ class MapPanel(wx.Panel):
                     g.SetPen(wx.Pen(wx.BLUE, 1))
                     g.SetBrush(wx.Brush('grey', style=wx.BRUSHSTYLE_TRANSPARENT))
                     g.SetTextForeground(wx.BLUE)
-                    for i in range(0, len(plotrows)):
-                        if plotrows[i][7] is None or plotrows[i][8] is None:
-                            continue
-                        else:
-                            g.DrawEllipse(int(plotrows[i][7]) + 50, 500 - int(plotrows[i][8]) + 50, 3, 3)
-                            g.DrawText(taglist[i], int(plotrows[i][7]) + 50 + 2, 500 - int(plotrows[i][8]) + 50 + 2)
+                    if self.plotsize == 1:
+                        for i in range(0, len(plotrows)):
+                            if plotrows[i][7] is None or plotrows[i][8] is None:
+                                continue
+                            else:
+                                g.DrawEllipse(float(plotrows[i][7])*5 + 50, 500 - float(plotrows[i][8])*5 + 50, 3, 3)
+                                g.DrawText(taglist[i], float(plotrows[i][7])*5 + 50 + 2, 500 - float(plotrows[i][8])*5 +
+                                           50 + 2)
+                    elif self.plotsize == 10:
+                        for i in range(0, len(plotrows)):
+                            if plotrows[i][7] is None or plotrows[i][8] is None:
+                                continue
+                            else:
+                                g.DrawEllipse(int(plotrows[i][7]) + 50, 500 - int(plotrows[i][8]) + 50, 3, 3)
+                                g.DrawText(taglist[i], int(plotrows[i][7]) + 50 + 2, 500 - int(plotrows[i][8]) + 50 + 2)
+                    elif self.plotsize == 20:
+                        for i in range(0, len(plotrows)):
+                            if plotrows[i][7] is None or plotrows[i][8] is None:
+                                continue
+                            else:
+                                g.DrawEllipse(int(plotrows[i][7])/2 + 50, 500 - int(plotrows[i][8])/2 + 50, 3, 3)
+                                g.DrawText(taglist[i], int(plotrows[i][7])/2 + 50 + 2, 500 - int(plotrows[i][8])/2 +
+                                           50 + 2)
 
                     currentcol, newcol = (self.datagrid.GetNumberCols(), len(colnames))
                     if newcol < currentcol:
@@ -185,9 +206,12 @@ class MapPanel(wx.Panel):
 
                     for p in range(0, len(plotrows)):
                         for j in range(0, len(colnames)):
-                            self.datagrid.SetCellValue(p, j, str(plotrows[p][j]))
-                            self.datagrid.SetReadOnly(p, j)
-                            self.datagrid.DisableRowResize(p)
+                            if plotrows[p][j] is None:
+                                self.datagrid.SetCellValue(p, j, str(''))
+                            else:
+                                self.datagrid.SetCellValue(p, j, str(plotrows[p][j]))
+                                self.datagrid.SetReadOnly(p, j)
+                                self.datagrid.DisableRowResize(p)
 
                     for p in range(0, len(colnames)):
                         self.datagrid.SetColLabelValue(p, colnames[p][0])
@@ -198,9 +222,6 @@ class MapPanel(wx.Panel):
         x, y = self.ScreenToClient(wx.GetMousePosition())
         self.labelX.SetLabel(str(x-50))
         self.labelY.SetLabel(str(500-y+50))
-
-    def refresh(self, event):
-        self.Refresh()
 
     def lockrelation(self, event):
         if self.relationname.Enabled and self.dbname.Enabled:
@@ -225,7 +246,7 @@ class MapPanel(wx.Panel):
             wx.MessageBox('超出範圍!', caption='超出範圍警告')
             return
         elif self.x1.GetValue() != '' and self.y1.GetValue() != '' and self.x2.GetValue() != '' \
-                and self.y2.GetValue() != '' and tag.strip():
+                and self.y2.GetValue() != '' and tag.strip() != '':
 
             conn = psycopg2.connect(database=self.dbnametext, user='postgres', password='2717484',
                                     host='localhost', port='5432')
@@ -245,10 +266,21 @@ class MapPanel(wx.Panel):
                 g.DrawEllipse(x, y, 3, 3)
                 g.SetTextForeground(wx.BLUE)
                 g.DrawText(tag, x+2, y+2)
-                cur.execute('update plotdata set "x3"=\'' + str(x3) + '\' where "tag"=\'' + tag + '\'')
-                conn.commit()
-                cur.execute('update plotdata set "y3"=\'' + str(y3) + '\' where "tag"=\'' + tag + '\'')
-                conn.commit()
+                if self.plotsize == 1:
+                    cur.execute('update plotdata set "x3"=\'' + str(x3/5) + '\' where "tag"=\'' + tag + '\'')
+                    conn.commit()
+                    cur.execute('update plotdata set "y3"=\'' + str(y3/5) + '\' where "tag"=\'' + tag + '\'')
+                    conn.commit()
+                elif self.plotsize == 10:
+                    cur.execute('update plotdata set "x3"=\'' + str(x3) + '\' where "tag"=\'' + tag + '\'')
+                    conn.commit()
+                    cur.execute('update plotdata set "y3"=\'' + str(y3) + '\' where "tag"=\'' + tag + '\'')
+                    conn.commit()
+                elif self.plotsize == 20:
+                    cur.execute('update plotdata set "x3"=\'' + str(x3*2) + '\' where "tag"=\'' + tag + '\'')
+                    conn.commit()
+                    cur.execute('update plotdata set "y3"=\'' + str(y3*2) + '\' where "tag"=\'' + tag + '\'')
+                    conn.commit()
                 conn.close()
             else:
                 wx.MessageBox('此小樣方無此資料!')
@@ -278,14 +310,84 @@ class MapPanel(wx.Panel):
     def newconfirmclick(self, event):
         if str(self.newx1.GetValue()).strip() == '' or str(self.newy1.GetValue()).strip() == '' or \
                 str(self.newx2.GetValue()).strip() == '' or str(self.newy2.GetValue()).strip() == '' or \
-                str(self.newsp.GetValue()).strip() == '':
+                str(self.newtag.GetValue()).strip() == '' or str(self.newsp.GetValue()).strip() == '':
             wx.MessageBox('所需資料不足')
             return
+
+        x1 = str(self.newx1.GetValue()).strip()
+        y1 = str(self.newy1.GetValue()).strip()
+        x2 = str(self.newx2.GetValue()).strip()
+        y2 = str(self.newy2.GetValue()).strip()
+        tag = str(self.newtag.GetValue()).strip()
+        sp = str(self.newsp.GetValue()).strip()
+        dbh = str(self.newdbh.GetValue()).strip()
+
+        # noinspection PyBroadException
+        try:
+            conn = psycopg2.connect(database=self.dbnametext, user='postgres', password='2717484',
+                                    host='localhost', port='5432')
+            cur = conn.cursor()
+            cur.execute('insert into ' + self.relationnametext + ' ("x1","y1","x2","y2","tag","sp","dbh") values ' +
+                        '(\'' + x1 + '\',\'' + y1 + '\',\'' + x2 + '\',\'' + y2 + '\',\'' + tag + '\',\'' +
+                        sp + '\',' + dbh + ')')
+            conn.commit()
+            conn.close()
+            wx.MessageBox('新增成功!')
+            self.newx1.SetValue('')
+            self.newy1.SetValue('')
+            self.newx2.SetValue('')
+            self.newy2.SetValue('')
+            self.newtag.SetValue('')
+            self.newsp.SetValue('')
+            self.newdbh.SetValue('')
+            self.newdtbox.Enabled = False
+            self.drawlineandoldpoint(event)
+        except Exception as err:
+            wx.MessageBox(str(err))
 
     def deletedtclick(self, event):
         if self.dbnametext == '':
             wx.MessageBox('no database')
             return
+        self.deletedtbox.Enabled = True
+        self.deletetag.SetFocus()
+
+    def deleteconfrimclick(self, event):
+        if self.x1.GetValue() != '' and self.y1.GetValue() != '' and self.x2.GetValue() != '' \
+                and self.y2.GetValue() != '' and self.deletetag.GetValue() != '':
+            conn = psycopg2.connect(database=self.dbnametext, user='postgres', password='2717484',
+                                    host='localhost', port='5432')
+            cur = conn.cursor()
+            cur.execute('select tag from ' + self.relationnametext + ' where "x1"=\'' + self.x1.GetValue() +
+                        '\' and "y1"=\'' + self.y1.GetValue() + '\' and "x2"=\'' + self.x2.GetValue() +
+                        '\' and "y2"=\'' + self.y2.GetValue() + '\'')
+            tagrows = cur.fetchall()
+            deletetaglist = []
+            for i in range(0, len(tagrows)):
+                deletetaglist.append(tagrows[i][0])
+            if str(self.deletetag.GetValue()) in deletetaglist:
+                cur.execute('delete from ' + self.relationnametext + ' where tag = \'' + self.deletetag.GetValue() +
+                            '\'')
+                conn.commit()
+                conn.close()
+                wx.MessageBox('確認刪除')
+                self.deletetag.SetValue('')
+                self.deletedtbox.Enabled = False
+                self.drawlineandoldpoint(event)
+            else:
+                conn.close()
+                wx.MessageBox('植株不在此區域')
+        else:
+            wx.MessageBox('請先前往小樣方或輸入要刪除的植株tag')
+
+    def size1change(self, event):
+        self.plotsize = 1
+
+    def size10change(self, event):
+        self.plotsize = 10
+
+    def size20change(self, event):
+        self.plotsize = 20
 
 
 if __name__ == '__main__':
