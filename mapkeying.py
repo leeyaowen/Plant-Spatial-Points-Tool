@@ -19,6 +19,7 @@ class MapPanel(wx.Panel):
         # 設定背景顏色
         self.SetBackgroundColour((240, 240, 240))
 
+        # 設定Groupbox
         self.plotsizebox = wx.StaticBox(self, label='選擇輸入區域大小', pos=(700, 90), size=(152, 88))
         self.newdtbox = wx.StaticBox(self, label='新增資料欄位填寫', pos=(905, 44), size=(192, 254))
         self.deletedtbox = wx.StaticBox(self, label='刪除資料tag填寫', pos=(905, 333), size=(192, 88))
@@ -83,6 +84,7 @@ class MapPanel(wx.Panel):
         self.datagrid.HideRowLabels()
         self.datagrid.SetLabelBackgroundColour(wx.WHITE)
 
+        # 設定Radiobutton
         self.plotsize1 = wx.RadioButton(self.plotsizebox, label='1x1', pos=(11, 21), size=(47, 16))
         self.plotsize10 = wx.RadioButton(self.plotsizebox, label='5x5', pos=(11, 43), size=(47, 16))
         self.plotsize20 = wx.RadioButton(self.plotsizebox, label='10x10', pos=(11, 66), size=(59, 16))
@@ -114,13 +116,14 @@ class MapPanel(wx.Panel):
         self.Bind(wx.EVT_PAINT, self.bufferpaint)
         self.dbname.SetFocus()
 
+        # 設定參數
         self.dbnametext = ''
         self.relationnametext = ''
         self.plotsize = 10
-
         self.newdtbox.Enabled = False
         self.deletedtbox.Enabled = False
 
+    # 劃格線、舊點位與表格
     def drawlineandoldpoint(self, event):
         maingridvalue = self.maingrid.GetValue()
         subgridvalue = self.subgrid.GetValue()
@@ -218,11 +221,13 @@ class MapPanel(wx.Panel):
                         self.datagrid.AutoSizeColumn(p)
                         self.datagrid.DisableColResize(p)
 
+    # 滑鼠移動改變座標位置
     def movemouse(self, event):
         x, y = self.ScreenToClient(wx.GetMousePosition())
         self.labelX.SetLabel(str(x-50))
         self.labelY.SetLabel(str(500-y+50))
 
+    # 資料庫與關聯表鎖定
     def lockrelation(self, event):
         if self.relationname.Enabled and self.dbname.Enabled:
             self.dbnametext = self.dbname.GetValue()
@@ -235,6 +240,7 @@ class MapPanel(wx.Panel):
             self.relationname.Enabled = True
             self.btnlockrelation.SetLabel('鎖定')
 
+    # 畫點
     def drawpoint(self, event):
         x3 = int(self.labelX.GetLabel())
         y3 = int(self.labelY.GetLabel())
@@ -378,6 +384,8 @@ class MapPanel(wx.Panel):
             else:
                 conn.close()
                 wx.MessageBox('植株不在此區域')
+                self.deletetag.SetValue('')
+                self.deletedtbox.Enabled = False
         else:
             wx.MessageBox('請先前往小樣方或輸入要刪除的植株tag')
             self.deletedtbox.Enabled = False
