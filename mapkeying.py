@@ -3,6 +3,7 @@ import wx.grid as wxgrid
 import psycopg2
 
 
+
 class MapKeying(wx.Frame):
 
     def __init__(self, parent):
@@ -122,6 +123,7 @@ class MapPanel(wx.Panel):
         self.plotsize = 10
         self.newdtbox.Enabled = False
         self.deletedtbox.Enabled = False
+        
 
     # 劃格線、舊點位與表格
     def drawlineandoldpoint(self, event):
@@ -158,6 +160,10 @@ class MapPanel(wx.Panel):
                     cur.execute('select * from ' + self.relationnametext + ' where "x1"=\'' + self.x1.GetValue() +
                                 '\' and "y1"=\'' + self.y1.GetValue() + '\' and "x2"=\'' + self.x2.GetValue() +
                                 '\' and "y2"=\'' + self.y2.GetValue() + '\'')
+                    # x1value = "'%s'" % (self.x1.GetValue())
+                    # cur.execute("select * from %s where x1 = %s and y1 = %s and x2 = %s and y2 = %s" %
+                    #             (self.relationnametext, x1value, '\'' + self.y1.GetValue() +
+                    #              '\'', '\'' + self.x2.GetValue() + '\'', '\'' + self.y2.GetValue() + '\''))
                 except Exception:
                     wx.MessageBox('資料庫或資料表名稱錯誤或未鎖定!')
                 else:
@@ -273,23 +279,30 @@ class MapPanel(wx.Panel):
                 g.SetTextForeground(wx.BLUE)
                 g.DrawText(tag, x+2, y+2)
                 if self.plotsize == 1:
-                    cur.execute('update plotdata set "x3"=\'' + str(x3/5) + '\' where "tag"=\'' + tag + '\'')
+                    cur.execute('update ' + self.relationnametext + ' set "x3"=\'' + str(x3/5) + '\' where "tag"=\'' +
+                                tag + '\'')
                     conn.commit()
-                    cur.execute('update plotdata set "y3"=\'' + str(y3/5) + '\' where "tag"=\'' + tag + '\'')
+                    cur.execute('update ' + self.relationnametext + ' set "y3"=\'' + str(y3/5) + '\' where "tag"=\'' +
+                                tag + '\'')
                     conn.commit()
                 elif self.plotsize == 10:
-                    cur.execute('update plotdata set "x3"=\'' + str(x3) + '\' where "tag"=\'' + tag + '\'')
+                    cur.execute('update ' + self.relationnametext + ' set "x3"=\'' + str(x3) + '\' where "tag"=\'' +
+                                tag + '\'')
                     conn.commit()
-                    cur.execute('update plotdata set "y3"=\'' + str(y3) + '\' where "tag"=\'' + tag + '\'')
+                    cur.execute('update ' + self.relationnametext + ' set "y3"=\'' + str(y3) + '\' where "tag"=\'' +
+                                tag + '\'')
                     conn.commit()
                 elif self.plotsize == 20:
-                    cur.execute('update plotdata set "x3"=\'' + str(x3*2) + '\' where "tag"=\'' + tag + '\'')
+                    cur.execute('update ' + self.relationnametext + ' set "x3"=\'' + str(x3*2) + '\' where "tag"=\'' +
+                                tag + '\'')
                     conn.commit()
-                    cur.execute('update plotdata set "y3"=\'' + str(y3*2) + '\' where "tag"=\'' + tag + '\'')
+                    cur.execute('update ' + self.relationnametext + ' set "y3"=\'' + str(y3*2) + '\' where "tag"=\'' +
+                                tag + '\'')
                     conn.commit()
                 conn.close()
             else:
                 wx.MessageBox('此小樣方無此資料!')
+                conn.close()
 
     def bufferpaint(self, event):
         wx.BufferedPaintDC(self, self.buffer)
