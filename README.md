@@ -1,4 +1,5 @@
 # 植株座標輸入程式  
+![GitHub All Releases](https://img.shields.io/github/downloads/leeyaowen/Mapkeying_python/total?color=green) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/leeyaowen/Mapkeying_python?color=green)
 * 這是一個用來輸入植株座標的程式，需要搭配PostgreSQL使用，利用Python撰寫  
 * [Windows平台載點](https://github.com/leeyaowen/Mapkeying_python/releases)  
 
