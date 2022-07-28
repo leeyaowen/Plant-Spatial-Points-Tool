@@ -35,4 +35,4 @@
 7. click on the map
 
 ### Screenshot  
-![](screenshot/Plant Spatial Points Tool.JPG)
+![](https://raw.githubusercontent.com/leeyaowen/Plant-Spatial-Points-Tool/master/screenshot/Plant%20Spatial%20Points%20Tool.JPG)
