@@ -1,7 +1,7 @@
 # Plant Spatial Points Tool  
 ![GitHub All Releases](https://img.shields.io/github/downloads/leeyaowen/Mapkeying_python/total?color=green) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/leeyaowen/Mapkeying_python?color=green)  
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/A0A1E23BS)  
-* This is a software about annotation for plant spatial points, need PostgreSQL, build applications in Python  
+* This is a software about annotation for plant spatial points, need PostgreSQL, build application in Python  
 * [Windows Releases](https://github.com/leeyaowen/Mapkeying_python/releases)  
 
 ## PostgreSQL setting(with pgAdmin)
