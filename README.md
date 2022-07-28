@@ -11,7 +11,7 @@
 4. set a relation **{your relation name}**(e.g., plotdata).
 5. set column, including **x1,y1,x2,y2,tag,sp,dbh,x3,y3**, set dbh as numeric. Otherwise, text.  
 6. set tag as primary key(in Constraints setting).  
-7. import data(csv format, and UTF-8 is encoding.  
+7. import data(csv format, and UTF-8 is encoding).  
 
 ### About ralation column name
 * x1,y1,x2,y2 -> plot position  
