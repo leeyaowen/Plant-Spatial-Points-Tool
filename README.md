@@ -28,8 +28,11 @@
 ## Important!  
 1. enter the database and relation name, and lock  
 2. choose area(meter)    
-3. set main/sub grids，e.g., (1,5)/(2,5)/(3,3)  
-4. click 'Go/Refresh' button   
+3. set main/sub grids, e.g., (1,5)/(2,5)/(3,3)  
+4. set quadrat
+5. click 'Go/Refresh' button   
+6. enter target tag  
+7. click on the map
 
 ### Screenshot  
-![](Mapkeying_python_picture/program_view.PNG)
+![](screenshot/Plant Spatial Points Tool.JPG)
