@@ -13,7 +13,7 @@
 6. set tag as primary key(in Constraints setting).  
 7. import data(csv format, and UTF-8 is encoding).  
 
-### About ralation column name
+### About relation column names
 * x1,y1,x2,y2 -> plot position  
 * tag -> plant ID  
 * sp -> species name  
