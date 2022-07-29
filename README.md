@@ -1,5 +1,5 @@
 # Plant Spatial Points Tool  
-![GitHub All Releases](https://img.shields.io/github/downloads/leeyaowen/Mapkeying_python/total?color=green) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/leeyaowen/Mapkeying_python?color=green)  
+![GitHub All Releases](https://img.shields.io/github/downloads/leeyaowen/Mapkeying_python/total?color=green) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/leeyaowen/Mapkeying_python?color=green) [![DOI](https://zenodo.org/badge/161195182.svg)](https://zenodo.org/badge/latestdoi/161195182)    
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/A0A1E23BS)  
 * This is a software about annotation for plant spatial points, need PostgreSQL, build application in Python  
 * [Windows Releases](https://github.com/leeyaowen/Mapkeying_python/releases)  
@@ -20,7 +20,7 @@
 * dbh -> diameter breast height  
 * x3,y3 -> plants points position, record by this program  
 
-### commonly used sql commands
+### Commonly used sql commands
 > in SQL Eidtor
 >> `select * from plotdata` -> select all data from plotdata  
 >> `select * from plotdata where x3 is null` -> select x3 data is null from plotdata  
@@ -36,3 +36,6 @@
 
 ### Screenshot  
 ![](https://raw.githubusercontent.com/leeyaowen/Plant-Spatial-Points-Tool/master/screenshot/Plant%20Spatial%20Points%20Tool.JPG)
+
+### Citation  
+Yao-Wen Lee (2022) Plant Spatial Points Tool. URL: https://github.com/leeyaowen/Plant-Spatial-Points-Tool DOI: 10.5281/zenodo.6931327  
